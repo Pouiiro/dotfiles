@@ -1,0 +1,3 @@
+theme = "pouiiro" 
+
+show = ["Host","Machine", "OperatingSystem", "Terminal", "Shell", "Uptime", "Processor","Battery", "Memory", "Resolution", "ProcessorLoad"]
