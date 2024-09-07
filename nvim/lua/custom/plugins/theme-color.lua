@@ -97,6 +97,11 @@ return {
           CursorLine = {
             bg = '#210f2e',
           },
+          NvimTreeNormal = { bg = colors.none },
+          -- VertSplit = { bg = '#ff0000', fg = '#ff0000' },
+          WinSeparator = { bg = colors.none, fg = colors.none },
+          FloatermBorder = { fg = colors.teal },
+          FloatermNC = { fg = 'gray' },
         }
       end,
     }

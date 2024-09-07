@@ -34,14 +34,29 @@ return {
       --  into multiple repos for maintenance purposes.
       'hrsh7th/cmp-nvim-lsp',
       'hrsh7th/cmp-path',
+      'onsails/lspkind.nvim',
     },
     config = function()
       -- See `:help cmp`
       local cmp = require 'cmp'
       local luasnip = require 'luasnip'
+      local lspkind = require 'lspkind'
       luasnip.config.setup {}
 
       cmp.setup {
+        ---@diagnostic disable-next-line: missing-fields
+        formatting = {
+          format = lspkind.cmp_format {
+            mode = 'symbol_text', -- show only symbol annotations
+            symbol_map = { Copilot = '' },
+            -- maxwidth = 50,
+            maxwidth = function()
+              return math.floor(0.45 * vim.o.columns)
+            end,
+            ellipsis_char = '...', -- when popup menu exceed maxwidth, the truncated part would show ellipsis_char instead (must define maxwidth first)
+            show_labelDetails = true, -- show labelDetails in menu. Disabled by default       -- },
+          },
+        },
         all = {
           border = 'rounded',
         },
@@ -112,14 +127,17 @@ return {
           --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
         },
         sources = {
+          -- Copilot Source
+          { name = 'copilot', group_index = 2 },
+          -- Other Sources
+          { name = 'nvim_lsp', group_index = 2 },
+          { name = 'path', group_index = 2 },
+          { name = 'luasnip', group_index = 2 },
           {
             name = 'lazydev',
             -- set group index to 0 to skip loading LuaLS completions as lazydev recommends it
             group_index = 0,
           },
-          { name = 'nvim_lsp' },
-          { name = 'luasnip' },
-          { name = 'path' },
         },
       }
     end,

@@ -1,6 +1,17 @@
+if vim.g.neovide then
+  return {}
+end
+
 return {
   'echasnovski/mini.animate',
   version = false,
+  cond = function()
+    if vim.g.neovide then
+      return true
+    end
+
+    return false
+  end,
   config = function()
     require('mini.animate').setup {
       -- Cursor path

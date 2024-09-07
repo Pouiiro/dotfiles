@@ -31,7 +31,7 @@ return {
       view_error = 'notify', -- view for errors
       view_warn = 'notify', -- view for warnings
       view_history = 'popup', -- view for :messages
-      view_search = 'virtualtext', -- view for search count messages. Set to `false` to disable
+      view_seach = 'virtualtext', -- view for search count messages. Set to `false` to disable
     },
     popupmenu = {
       enabled = true, -- enables the Noice popupmenu UI
@@ -198,7 +198,16 @@ return {
     ---@type NoiceConfigViews
     views = {}, ---@see section on views
     ---@type NoiceRouteConfig[]
-    routes = {}, --- @see section on routes
+    routes = {
+      {
+        filter = {
+          event = 'msg_show',
+          kind = '',
+          find = 'written',
+        },
+        opts = { skip = true },
+      },
+    }, --- @see section on routes
     ---@type table<string, NoiceFilter>
     status = {}, --- @see section on statusline components
     ---@type NoiceFormatOptions

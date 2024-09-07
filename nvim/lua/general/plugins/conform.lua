@@ -1,24 +1,57 @@
+local function save_buffer_after_delay(delay)
+  vim.defer_fn(function()
+    vim.api.nvim_command 'write'
+    -- print('Buffer saved after ' .. delay .. ' ms')
+  end, delay)
+end
+
 return {
-  { -- Autoformat
+  {
     'stevearc/conform.nvim',
     event = { 'BufWritePre' },
     cmd = { 'ConformInfo' },
     keys = {
       {
-        '<leader>f',
+        '<leader>ff',
         function()
           require('conform').format { async = true, lsp_fallback = true }
         end,
         mode = '',
         desc = '[F]ormat buffer',
       },
+      {
+        '<leader>ci',
+        function()
+          local bufnr = vim.api.nvim_get_current_buf()
+          require('vtsls').commands['remove_unused_imports'](bufnr)
+          save_buffer_after_delay(100)
+        end,
+        mode = '',
+        desc = '[i] Remove unused imports',
+      },
+      {
+        '<leader>cv',
+        function()
+          local bufnr = vim.api.nvim_get_current_buf()
+          require('vtsls').commands['remove_unused'](bufnr)
+          save_buffer_after_delay(100)
+        end,
+        mode = '',
+        desc = '[v] Remove unused variables',
+      },
+      {
+        '<leader>cm',
+        function()
+          local bufnr = vim.api.nvim_get_current_buf()
+          require('vtsls').commands['add_missing_imports'](bufnr)
+          save_buffer_after_delay(100)
+        end,
+        mode = '',
+        desc = '[m] Add missing imports',
+      },
     },
     opts = {
-      notify_on_error = true,
       format_on_save = function(bufnr)
-        -- Disable "format_on_save lsp_fallback" for languages that don't
-        -- have a well standardized coding style. You can add additional
-        -- languages here or re-enable it for the disabled ones.
         local disable_filetypes = { c = true, cpp = true }
         return {
           timeout_ms = 500,
@@ -27,21 +60,16 @@ return {
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
-        javascript = { 'prettierd' },
-        typescript = { 'prettierd' },
-        javascriptreact = { 'prettierd' },
-        typescriptreact = { 'prettierd' },
-        css = { 'prettierd' },
-        html = { 'prettierd' },
-        json = { 'prettierd' },
-        yaml = { 'prettierd' },
-        markdown = { 'prettierd' },
-        graphql = { 'prettierd' },
-        -- Conform can also run multiple formatters sequentially
-        -- python = { "isort", "black" },
-        --
-        -- You can use 'stop_after_first' to run the first available formatter from the list
-        -- javascript = { "prettierd", "prettier", stop_after_first = true },
+        javascript = { 'biome', 'prettierd', stop_after_first = true },
+        typescript = { 'biome', 'prettierd', stop_after_first = true },
+        javascriptreact = { 'biome', 'prettierd', stop_after_first = true },
+        typescriptreact = { 'biome', 'prettierd', stop_after_first = true },
+        css = { 'biome', 'prettierd', stop_after_first = true },
+        html = { 'biome', 'prettierd', stop_after_first = true },
+        json = { 'biome', 'prettierd', stop_after_first = true },
+        yaml = { 'biome', 'prettierd', stop_after_first = true },
+        markdown = { 'biome', 'prettierd', stop_after_first = true },
+        graphql = { 'biome', 'prettierd', stop_after_first = true },
       },
     },
   },

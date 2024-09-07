@@ -25,4 +25,9 @@ require 'lazy-bootstrap'
 -- [[ Configure and install plugins ]]
 require 'lazy-plugins'
 
+-- [[ Add config for NeoVide ]]
+require 'neovide-init'
+
+-- [[ Workspace plugins ]]
+require 'lsp-rename'
 -- vim: ts=2 sts=2 sw=2 et

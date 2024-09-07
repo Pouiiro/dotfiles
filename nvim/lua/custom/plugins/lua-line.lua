@@ -21,6 +21,7 @@ return {
 
     local lualine = require 'lualine'
     local git_blame = require 'gitblame'
+
     local function getBattery()
       return require('battery').get_status_line()
     end
@@ -51,6 +52,8 @@ return {
       options = {
         -- Disable sections and component separators
         component_separators = '',
+        icons_enabled = true,
+        always_divide_middle = true,
         section_separators = '',
         theme = {
           -- We are going to use lualine_c an lualine_x as left and
@@ -91,19 +94,19 @@ return {
       table.insert(config.sections.lualine_x, component)
     end
 
-    ins_left {
-      function()
-        return '▊'
-      end,
-      color = { fg = colors.blue }, -- Sets highlighting of component
-      padding = { left = 0, right = 1 }, -- We don't need space before this
-    }
+    -- ins_left {
+    --   function()
+    --     return '▊'
+    --   end,
+    --   color = { fg = colors.blue }, -- Sets highlighting of component
+    --   padding = { left = 0, right = 1 }, -- We don't need space before this
+    -- }
 
     ins_left {
       -- mode component
       function()
         local m = vim.api.nvim_get_mode().mode
-        return '' .. '  ' .. m.upper(m) .. ''
+        return '  ' .. '  ' .. m.upper(m) .. ''
       end,
       color = function()
         -- auto change color according to neovims mode
@@ -133,22 +136,48 @@ return {
       end,
       padding = { right = 1 },
     }
+    --
+    -- ins_left {
+    --   -- filesize component
+    --   'filesize',
+    --   cond = conditions.buffer_not_empty,
+    -- }
 
-    ins_left {
-      -- filesize component
-      'filesize',
-      cond = conditions.buffer_not_empty,
-    }
-
-    ins_left {
-      'filename',
-      cond = conditions.buffer_not_empty,
-      color = { fg = colors.magenta, gui = 'bold' },
-    }
+    -- ins_left {
+    --   'filename',
+    --   cond = conditions.buffer_not_empty,
+    --   color = { fg = colors.magenta, gui = 'bold' },
+    -- }
 
     ins_left { 'location' }
 
-    ins_left { 'progress', color = { fg = colors.fg, gui = 'bold' } }
+    -- ins_left { 'progress', color = { fg = colors.fg, gui = 'bold' } }
+    ins_left {
+      'copilot',
+      -- Default values
+      symbols = {
+        status = {
+          icons = {
+            enabled = ' ',
+            sleep = ' ', -- auto-trigger disabled
+            disabled = ' ',
+            warning = ' ',
+            unknown = ' ',
+          },
+          hl = {
+            enabled = '#50FA7B',
+            sleep = '#50FA7B',
+            disabled = '#6272A4',
+            warning = '#FFB86C',
+            unknown = '#FF5555',
+          },
+        },
+        spinners = require('copilot-lualine.spinners').dots,
+        spinner_color = '#6272A4',
+      },
+      show_colors = true,
+      show_loading = true,
+    }
 
     ins_left {
       'diagnostics',
@@ -178,13 +207,21 @@ return {
         if next(clients) == nil then
           return msg
         end
+
+        local client_names = {}
+
         for _, client in ipairs(clients) do
           local filetypes = client.config.filetypes
           if filetypes and vim.fn.index(filetypes, buf_ft) ~= -1 then
-            return client.name
+            table.insert(client_names, client.name)
           end
         end
-        return msg
+
+        if #client_names == 0 then
+          return msg
+        else
+          return table.concat(client_names, ', ')
+        end
       end,
       icon = '  LSP:',
       color = { fg = '#ffffff', gui = 'bold' },
@@ -199,19 +236,19 @@ return {
       padding = { left = 0, right = 1 }, -- We don't need space before this
     }
 
-    ins_right {
-      'o:encoding', -- option component same as &encoding in viml
-      fmt = string.upper, -- I'm not sure why it's upper case either ;)
-      cond = conditions.hide_in_width,
-      color = { fg = colors.green, gui = 'bold' },
-    }
-
-    ins_right {
-      'fileformat',
-      fmt = string.upper,
-      icons_enabled = false, -- I think icons are cool but Eviline doesn't have them. sigh
-      color = { fg = colors.green, gui = 'bold' },
-    }
+    -- ins_right {
+    --   'o:encoding', -- option component same as &encoding in viml
+    --   fmt = string.upper, -- I'm not sure why it's upper case either ;)
+    --   cond = conditions.hide_in_width,
+    --   color = { fg = colors.green, gui = 'bold' },
+    -- }
+    --
+    -- ins_right {
+    --   'fileformat',
+    --   fmt = string.upper,
+    --   icons_enabled = false, -- I think icons are cool but Eviline doesn't have them. sigh
+    --   color = { fg = colors.green, gui = 'bold' },
+    -- }
 
     ins_right {
       'branch',
@@ -236,13 +273,13 @@ return {
       color = { fg = colors.fg, bg = colors.bg },
     }
 
-    ins_right {
-      function()
-        return '▊'
-      end,
-      color = { fg = colors.blue },
-      padding = { left = 1 },
-    }
+    -- ins_right {
+    --   function()
+    --     return '▊'
+    --   end,
+    --   color = { fg = colors.blue },
+    --   padding = { left = 1 },
+    -- }
 
     -- Now don't forget to initialize lualine
     lualine.setup(config)
