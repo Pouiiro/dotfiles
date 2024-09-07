@@ -74,11 +74,58 @@ vim.g.loaded_netrwPlugin = 1
 
 vim.diagnostic.config { virtual_text = false, virtual_lines = { only_current_line = true } }
 
-vim.o.foldcolumn = '1' -- '0' is not bad
-vim.o.foldlevel = 99 -- Using ufo provider need a large value, feel free to decrease the value
-vim.o.foldlevelstart = 99
-vim.o.foldenable = true
+vim.api.nvim_create_autocmd('BufEnter', {
+  callback = function()
+    if vim.bo.filetype == 'NvimTree' then
+      vim.wo.statuscolumn = ''
+    end
+  end,
+})
 
-vim.o.fillchars = [[eob: ,fold: ,foldopen:,foldsep: ,foldclose:]]
-vim.o.foldcolumn = '1'
+vim.o.laststatus = 3
+vim.o.statusline = vim.o.tabline
 
+vim.o.showtabline = 0
+
+-- Disable Copilot globally
+vim.api.nvim_create_autocmd({ 'BufEnter' }, {
+  pattern = '*',
+  callback = function()
+    if vim.fn.exists ':Copilot' == 2 then -- Check if the Copilot command exists
+      vim.cmd 'Copilot disable'
+    end
+  end,
+})
+
+-- Enable Copilot for specific directory (e.g., ~/dev/ac-cloud/)
+vim.api.nvim_create_autocmd({ 'BufEnter' }, {
+  pattern = '*',
+  callback = function()
+    local file_path = vim.fn.expand '%:p'
+    if string.match(file_path, '/dev/ac%-cloud/') then
+      if vim.fn.exists ':Copilot' == 2 then -- Check if the Copilot command exists
+        vim.cmd 'Copilot enable'
+      end
+    end
+  end,
+})
+
+-- vim.api.nvim_create_user_command('Format', function()
+--   local formatter = get_closest_formatter {
+--     biome = { 'biome.json' },
+--     prettier = { '.prettierrc' },
+--     stylua = { 'stylua.toml' },
+--   }
+--
+--   if not formatter then
+--     print 'formatter not found, using lsp'
+--     require('conform').format { async = true, lsp_fallback = true }
+--   else
+--     print('formatting with ' .. formatter[1])
+--     require('conform').format {
+--       async = true,
+--       formatters = formatter,
+--       lsp_fallback = false,
+--     }
+--   end
+-- end, {})

@@ -30,14 +30,6 @@ return {
       'hrsh7th/cmp-nvim-lsp',
     },
     config = function()
-      -- import lspconfig plugin
-      local lspconfig = require 'lspconfig'
-
-      -- import mason_lspconfig plugin
-      local mason_lspconfig = require 'mason-lspconfig'
-
-      -- import cmp-nvim-lsp plugin
-      local cmp_nvim_lsp = require 'cmp_nvim_lsp'
       --
       vim.api.nvim_create_autocmd('LspAttach', {
         group = vim.api.nvim_create_augroup('kickstart-lsp-attach', { clear = true }),
@@ -125,6 +117,9 @@ return {
             map('<leader>th', function()
               vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf })
             end, '[T]oggle Inlay [H]ints')
+
+            -- Enable inlay hints by default
+            -- vim.lsp.inlay_hint.enable()
           end
         end,
       })
@@ -160,34 +155,35 @@ return {
         --     client.server_capabilities.documentRangeFormattingProvider = false
         --   end,
         -- },
-        tsserver = {
-          settings = {
-            typescript = {
-              inlayHints = {
-                includeInlayParameterNameHints = 'all',
-                includeInlayParameterNameHintsWhenArgumentMatchesName = false,
-                includeInlayFunctionParameterTypeHints = true,
-                includeInlayVariableTypeHints = true,
-                includeInlayVariableTypeHintsWhenTypeMatchesName = false,
-                includeInlayPropertyDeclarationTypeHints = true,
-                includeInlayFunctionLikeReturnTypeHints = false,
-                includeInlayEnumMemberValueHints = true,
-              },
-            },
-            javascript = {
-              inlayHints = {
-                includeInlayParameterNameHints = 'all',
-                includeInlayParameterNameHintsWhenArgumentMatchesName = true,
-                includeInlayFunctionParameterTypeHints = true,
-                includeInlayVariableTypeHints = true,
-                includeInlayVariableTypeHintsWhenTypeMatchesName = true,
-                includeInlayPropertyDeclarationTypeHints = true,
-                includeInlayFunctionLikeReturnTypeHints = true,
-                includeInlayEnumMemberValueHints = true,
-              },
-            },
-          },
-        },
+        -- tsserver = {
+        --   settings = {
+        --     typescript = {
+        --       inlayHints = {
+        --         includeInlayParameterNameHints = 'all',
+        --         includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+        --         includeInlayFunctionParameterTypeHints = true,
+        --         includeInlayVariableTypeHints = true,
+        --         includeInlayVariableTypeHintsWhenTypeMatchesName = false,
+        --         includeInlayPropertyDeclarationTypeHints = true,
+        --         includeInlayFunctionLikeReturnTypeHints = false,
+        --         includeInlayEnumMemberValueHints = true,
+        --       },
+        --     },
+        --     javascript = {
+        --       inlayHints = {
+        --         includeInlayParameterNameHints = 'all',
+        --         includeInlayParameterNameHintsWhenArgumentMatchesName = true,
+        --         includeInlayFunctionParameterTypeHints = true,
+        --         includeInlayVariableTypeHints = true,
+        --         includeInlayVariableTypeHintsWhenTypeMatchesName = true,
+        --         includeInlayPropertyDeclarationTypeHints = true,
+        --         includeInlayFunctionLikeReturnTypeHints = true,
+        --         includeInlayEnumMemberValueHints = true,
+        --       },
+        --     },
+        --   },
+        -- },
+        biome = {},
         eslint = {
           {
             packageManager = 'pnpm',
@@ -196,15 +192,61 @@ return {
             },
           },
           on_attach = function(_, bufnr)
+            -- Ensure ESLint fixes issues (including unused imports) on buffer save
             vim.api.nvim_create_autocmd('BufWritePre', {
               buffer = bufnr,
-              command = 'EslintFixAll',
+              callback = function()
+                -- Run ESLint fix all command
+                vim.lsp.buf.execute_command {
+                  command = 'EslintFixAll',
+                  arguments = { vim.api.nvim_buf_get_name(bufnr) },
+                }
+              end,
             })
           end,
         },
         jsonls = {},
         graphql = {},
-        -- vtsls = {},
+        vtsls = {
+          -- on_attach = function(_, bufnr)
+          --   vim.api.nvim_create_autocmd('BufWritePre', {
+          --     buffer = bufnr,
+          --     callback = function()
+          --       vim.lsp.buf.execute_command {
+          --         command = 'VtsExec remove_unused_imports',
+          --       }
+          --     end,
+          --   })
+          -- end,
+          settings = {
+            typescript = {
+              inlayHints = {
+                parameterNames = { enabled = 'literals' },
+                parameterTypes = { enabled = true },
+                variableTypes = { enabled = true },
+                propertyDeclarationTypes = { enabled = true },
+                functionLikeReturnTypes = { enabled = true },
+                enumMemberValues = { enabled = true },
+                FunctionLikeReturnType = { enabled = true },
+              },
+            },
+          },
+          config = {
+            handlers = {
+              source_definition = function(err, locations) end,
+              file_references = function(err, locations) end,
+              code_action = function(err, actions) end,
+            },
+
+            -- automatically trigger renaming of extracted symbol
+            refactor_auto_rename = true,
+            refactor_move_to_file = {
+              -- If dressing.nvim is installed, telescope will be used for selection prompt. Use this to customize
+              -- the opts for telescope picker.
+              telescope_opts = function(items, default) end,
+            },
+          },
+        },
         -- graphql = function(client)
         --   return {
         --     root_dir = client.util.root_pattern('.graphqlconfig', '.graphqlrc', 'package.json'),

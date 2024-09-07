@@ -98,4 +98,10 @@ vim.keymap.set({ 'i', 'n', 'v' }, '<C-s>', '<cmd>:w<cr><esc>', opts)
 -- quit
 vim.keymap.set('n', '<leader>qq', '<cmd>qa<cr>', { desc = 'Quit All' })
 
+-- D J T C
+vim.keymap.set('n', '<Tab>', '<cmd>BufferLineCycleNext<cr>', opts)
+-- vim.keymap.set('n', '<C-1>', '<cmd>BufferLineGroupToggle Json<cr>', opts)
+-- vim.keymap.set('n', '<C-2>', '<cmd>BufferLineGroupToggle Dot<cr>', opts)
+vim.keymap.set('n', '<C-1>', '<cmd>BufferLineGroupToggle Tests<cr>', opts)
+-- vim.keymap.set('n', '<C-4>', '<cmd>BufferLineGroupToggle Config<cr>', opts)
 -- vim: ts=2 sts=2 sw=2 et

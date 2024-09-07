@@ -11,7 +11,7 @@ return {
   },
   opts = {
     stages = 'slide',
-    timeout = 5000,
+    timeout = 2000,
     render = 'wrapped-compact',
     max_height = function()
       return math.floor(vim.o.lines * 0.75)
@@ -20,10 +20,7 @@ return {
       return math.floor(vim.o.columns * 0.75)
     end,
     on_open = function(win)
-      vim.api.nvim_win_set_config(win, { zindex = 100 })
+      vim.api.nvim_win_set_config(win, { zindex = 100, focusable = false })
     end,
   },
-  -- init = function()
-  --   vim.notify = require 'notify'
-  -- end,
 }

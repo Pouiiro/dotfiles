@@ -7,5 +7,6 @@ return {
   -- or lazy = false. One of both options will work.
   opts = {
     display_virtual_text = 0,
+    message_template = ' <summary> • <author> • <<sha>>',
   },
 }
