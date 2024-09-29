@@ -183,7 +183,6 @@ return {
         --     },
         --   },
         -- },
-        biome = {},
         eslint = {
           {
             packageManager = 'pnpm',
@@ -191,19 +190,19 @@ return {
               useFlatConfig = true,
             },
           },
-          on_attach = function(_, bufnr)
-            -- Ensure ESLint fixes issues (including unused imports) on buffer save
-            vim.api.nvim_create_autocmd('BufWritePre', {
-              buffer = bufnr,
-              callback = function()
-                -- Run ESLint fix all command
-                vim.lsp.buf.execute_command {
-                  command = 'EslintFixAll',
-                  arguments = { vim.api.nvim_buf_get_name(bufnr) },
-                }
-              end,
-            })
-          end,
+          -- on_attach = function(_, bufnr)
+          --   -- Ensure ESLint fixes issues (including unused imports) on buffer save
+          --   vim.api.nvim_create_autocmd('BufWritePre', {
+          --     buffer = bufnr,
+          --     callback = function()
+          --       -- Run ESLint fix all command
+          --       vim.lsp.buf.execute_command {
+          --         command = 'EslintFixAll',
+          --         arguments = { vim.api.nvim_buf_get_name(bufnr) },
+          --       }
+          --     end,
+          --   })
+          -- end,
         },
         jsonls = {},
         graphql = {},
@@ -219,6 +218,9 @@ return {
           --   })
           -- end,
           settings = {
+            vtsls = {
+              autoUseWorkspaceTsdk = true,
+            },
             typescript = {
               inlayHints = {
                 parameterNames = { enabled = 'literals' },

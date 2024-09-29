@@ -77,7 +77,7 @@ return {
         vim.lsp.buf.hover()
       end
     end)
-    -- vim.o.foldcolumn = 'auto:9'
+    -- vim.o.foldcolumn = 'auto:3'
     -- vim.o.statuscolumn = '%=%l%s%{foldlevel(v:lnum) > foldlevel(v:lnum - 1) ? (foldclosed(v:lnum) == -1 ? " ▼ " : " ⏵ ") : " " }'
     -- vim.o.fillchars = 'fold: ,vert:│,eob: ,foldopen:,foldclose:>,foldsep: ,signcolumn: ,'
 

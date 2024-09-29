@@ -35,8 +35,8 @@ return {
           },
         },
         filetypes = {
-          yaml = false,
-          markdown = false,
+          yaml = true,
+          markdown = true,
           help = false,
           gitcommit = false,
           gitrebase = false,
@@ -44,7 +44,7 @@ return {
           svn = false,
           cvs = false,
           sh = function()
-            if string.match(vim.fs.basename(vim.api.nvim_buf_get_name(0)), '^%.env.*') then
+            if string.match(vim.fs.basename(vim.api.nvim_buf_get_name(0)), '^%.env.*$') then
               -- disable for .env files
               return false
             end
@@ -54,7 +54,13 @@ return {
         },
         copilot_node_command = 'node', -- Node.js version must be > 18.x
         server_opts_overrides = {
-          InlineSuggestEnable = true,
+          trace = 'verbose',
+          settings = {
+            advanced = {
+              listCount = 10, -- #completions for panel
+              inlineSuggestCount = 3, -- #completions for getCompletions
+            },
+          },
         },
       }
     end,
@@ -62,7 +68,9 @@ return {
   {
     'zbirenbaum/copilot-cmp',
     config = function()
-      require('copilot_cmp').setup()
+      require('copilot_cmp').setup {
+        fix_pairs = true,
+      }
     end,
   },
   { 'AndreM222/copilot-lualine' },

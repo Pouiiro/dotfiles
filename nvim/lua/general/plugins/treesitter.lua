@@ -25,6 +25,7 @@ return {
         'regex',
         'gitignore',
         'json',
+        'styled',
       },
       -- Autoinstall languages that are not installed
       auto_install = true,

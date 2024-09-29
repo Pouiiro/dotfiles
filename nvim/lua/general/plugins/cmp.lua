@@ -35,6 +35,7 @@ return {
       'hrsh7th/cmp-nvim-lsp',
       'hrsh7th/cmp-path',
       'onsails/lspkind.nvim',
+      'nat-418/cmp-color-names.nvim',
     },
     config = function()
       -- See `:help cmp`
@@ -42,8 +43,12 @@ return {
       local luasnip = require 'luasnip'
       local lspkind = require 'lspkind'
       luasnip.config.setup {}
+      require('cmp-color-names').setup()
 
       cmp.setup {
+        experimental = {
+          ghost_text = true,
+        },
         ---@diagnostic disable-next-line: missing-fields
         formatting = {
           format = lspkind.cmp_format {

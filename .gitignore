@@ -13,3 +13,4 @@ znt
 .DS_Store
 /GitHub\\ActionsService/
 **/*/.DS_Store
+./karabiner/automatic_backups/**/*.*

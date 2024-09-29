@@ -87,45 +87,45 @@ vim.o.statusline = vim.o.tabline
 
 vim.o.showtabline = 0
 
--- Disable Copilot globally
-vim.api.nvim_create_autocmd({ 'BufEnter' }, {
-  pattern = '*',
-  callback = function()
+local function manage_copilot()
+  local file_path = vim.fn.expand '%:p'
+  -- Check if the file path contains 'myApp' directory anywhere in the path
+  if string.find(file_path, '/ac-cloud/', 1, true) then
+    if vim.fn.exists ':Copilot' == 2 then -- Check if the Copilot command exists
+      vim.cmd 'Copilot enable'
+    end
+  else
     if vim.fn.exists ':Copilot' == 2 then -- Check if the Copilot command exists
       vim.cmd 'Copilot disable'
     end
-  end,
-})
+  end
+end
 
--- Enable Copilot for specific directory (e.g., ~/dev/ac-cloud/)
-vim.api.nvim_create_autocmd({ 'BufEnter' }, {
+-- Enable Copilot for specific directory
+vim.api.nvim_create_autocmd({ 'BufEnter', 'BufWinEnter', 'InsertLeave', 'WinEnter' }, {
   pattern = '*',
-  callback = function()
-    local file_path = vim.fn.expand '%:p'
-    if string.match(file_path, '/dev/ac%-cloud/') then
-      if vim.fn.exists ':Copilot' == 2 then -- Check if the Copilot command exists
-        vim.cmd 'Copilot enable'
-      end
-    end
-  end,
+  callback = manage_copilot,
 })
 
--- vim.api.nvim_create_user_command('Format', function()
---   local formatter = get_closest_formatter {
---     biome = { 'biome.json' },
---     prettier = { '.prettierrc' },
---     stylua = { 'stylua.toml' },
---   }
+-- -- Disable Copilot globally
+-- vim.api.nvim_create_autocmd({ 'BufEnter' }, {
+--   pattern = '*',
+--   callback = function()
+--     if vim.fn.exists ':Copilot' == 2 then -- Check if the Copilot command exists
+--       vim.cmd 'Copilot disable'
+--     end
+--   end,
+-- })
 --
---   if not formatter then
---     print 'formatter not found, using lsp'
---     require('conform').format { async = true, lsp_fallback = true }
---   else
---     print('formatting with ' .. formatter[1])
---     require('conform').format {
---       async = true,
---       formatters = formatter,
---       lsp_fallback = false,
---     }
---   end
--- end, {})
+-- -- Enable Copilot for specific directory (e.g., ~/dev/ac-cloud/)
+-- vim.api.nvim_create_autocmd({ 'BufEnter' }, {
+--   pattern = '*',
+--   callback = function()
+--     local file_path = vim.fn.expand '%:p'
+--     if string.match(file_path, '**/dev/ac%-cloud/**') then
+--       if vim.fn.exists ':Copilot' == 2 then -- Check if the Copilot command exists
+--         vim.cmd 'Copilot enable'
+--       end
+--     end
+--   end,
+-- })
