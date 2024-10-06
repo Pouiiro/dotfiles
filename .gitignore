@@ -1,3 +1,4 @@
-.DS_Store
+result
 **/*/.DS_Store
-
+.direnv
+.DS_Store

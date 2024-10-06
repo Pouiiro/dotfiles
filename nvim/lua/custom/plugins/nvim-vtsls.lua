@@ -1,1 +1,0 @@
-return { 'yioneko/nvim-vtsls' }
